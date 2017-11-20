@@ -1,0 +1,19 @@
+{
+    "name": "midnite81/salesforce",
+    "description": "A PHP intergration to Salesforce Api",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Simon Rogers",
+            "email": "webdev@centralblue.co.uk"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Midnite81\\Salesforce\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {}
+}
