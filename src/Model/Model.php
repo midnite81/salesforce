@@ -18,7 +18,7 @@ abstract class Model
      *
      * @return string
      */
-    abstract protected function objectUrl();
+    abstract public function objectUrl();
 
     /**
      * Required fields for create
@@ -48,6 +48,26 @@ abstract class Model
         }
 
         throw new ConnectionNotSetException('The objectUrl has not been set on the class');
+    }
+
+    /**
+     * Get primary key
+     *
+     * @return bool|null
+     */
+    public function getId()
+    {
+        return (! empty($this->attributes['id'])) ?? null;
+    }
+
+    /**
+     * ToString
+     *
+     * @return bool|null
+     */
+    public function __toString()
+    {
+        return $this->getId();
     }
 
 
