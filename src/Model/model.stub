@@ -1,0 +1,16 @@
+<?php
+
+namespace App\SObjects;
+
+use Midnite81\Salesforce\Model\Model;
+
+class [className] extends Model
+{
+    /**
+     * Object Url
+     *
+     * @string
+     */
+    protected $objectUrl = '[objectUrl]';
+
+}

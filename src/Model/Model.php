@@ -3,11 +3,20 @@
 namespace Midnite81\Salesforce\Model;
 
 use App\Services\Auth;
-use GuzzleHttp\Client;
+use App\Services\Client;
+use Exception;
+use Midnite81\Salesforce\Exceptions\ActiveRecordNotSetException;
 use Midnite81\Salesforce\Exceptions\ConnectionNotSetException;
 
 abstract class Model
 {
+    /**
+     * The URL for the Salesforce Object
+     *
+     * @var string
+     */
+    protected $objectUrl;
+
     /**
      * The attributes which get filled on the model
      *
@@ -16,44 +25,106 @@ abstract class Model
     protected $attributes = [];
 
     /**
-     * Returns the url for this object
+     * Primary Key Id
      *
-     * @return string
+     * @var string
      */
-    abstract public function objectUrl();
+    protected $primaryKey;
 
     /**
-     * Required fields for create
+     * The base url for the salesforce instance
      *
-     * @return array
+     * @var \Illuminate\Config\Repository|mixed
      */
-    abstract protected function requiredFields();
+    protected $baseUrl;
 
-    /**
-     * The fillable fields for the object
-     *
-     * @return array
-     */
-    abstract protected function fillableFields();
 
     public function __construct($attributes = [])
     {
         $this->fillAttributes($attributes);
+        $this->baseUrl = config('salesforce.instance');
     }
 
-    public function find($id)
+    /**
+     * Create new instance of class
+     *
+     * @return static
+     */
+    protected static function newInstance()
     {
-        $describeUrl = $this->getConnection() . '/' . $id;
+        return new static();
+    }
+
+    /**
+     * Find the Record
+     *
+     * @param $id
+     * @return mixed|string
+     */
+    public static function find($id)
+    {
+        $instance = static::newInstance();
 
         try {
-            $client = new \App\Services\Client();
-            $response = $client->request($describeUrl, null, Auth::authorisationHeader());
+            $url = $instance->getConnection($id);
+            $client = new Client();
+            $response = $client->request($url, null, Auth::authorisationHeader());
         } catch (\Exception $e) {
             return 'Could not retrieve data: ' . $e->getMessage() . $e->getTraceAsString();
-
         }
 
-        return json_decode($response->getBody()->getContents());
+        $instance->fillAttributes($response->getBody()->getContents());
+
+        return $instance;
+    }
+
+    /**
+     * Create the object
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public static function create(array $data = [])
+    {
+        $instance = static::newInstance();
+
+        try {
+            $url = $instance->getConnection();
+            $client = new Client();
+            $response = $client->request($url, $data, Auth::authorisationHeader());
+        } catch (\Exception $e) {
+            $instance->error($e);
+        }
+
+        $data = json_decode($response->getBody()->getContents());
+
+        return static::find($data->id);
+    }
+
+    /**
+     * Update Object
+     *
+     * @param array $data
+     * @return mixed
+     * @throws ConnectionNotSetException
+     * @throws ActiveRecordNotSetException
+     */
+    public function update(array $data = [])
+    {
+        if (! empty($this->attributes[$this->primaryKey()])) {
+            $url = $this->getConnection($this->attributes[$this->primaryKey()]);
+
+            $client = new Client();
+            try {
+                $response = $client->patch($url, $data, Auth::authorisationHeader());
+            } catch (\Exception $e) {
+                return $this->error($e);
+            }
+
+            return $this->jsonDecodeBodyResponse($response);
+        }
+
+        throw new ActiveRecordNotSetException('Active Record is not set');
     }
 
     /**
@@ -61,12 +132,17 @@ abstract class Model
      *
      * @param $data
      */
-    protected function fillAttributes(array $data = [])
+    protected function fillAttributes($data)
     {
-        if (! empty($data)) {
-            $this->attributes = array_merge($this->fillableFields(), $data);
+
+        if (! empty($data) && json_decode($data, TRUE)) {
+            $data = json_decode($data, TRUE);
+        }
+
+        if (! empty($data) && ! empty($this->attributes)) {
+            $this->attributes = array_merge($this->attributes, $data);
         } else {
-            $this->attributes = $this->fillableFields();
+            $this->attributes = $data;
         }
 
     }
@@ -75,13 +151,14 @@ abstract class Model
     /**
      * Get Connection String
      *
+     * @param string|null $path
      * @return string
      * @throws ConnectionNotSetException
      */
-    public function getConnection()
+    public function getConnection(string $path = '')
     {
-        if (! empty($this->objectUrl())) {
-            return $this->objectUrl();
+        if (! empty($this->baseUrl) && ! empty($this->objectUrl)) {
+            return (empty($path)) ? $this->baseUrl . $this->objectUrl : $this->baseUrl . $this->objectUrl . '/' . $path;
         }
 
         throw new ConnectionNotSetException('The objectUrl has not been set on the class');
@@ -104,24 +181,25 @@ abstract class Model
      */
     public function getId()
     {
-        return (! empty($this->attributes['id'])) ?? null;
+        return (! empty($this->attributes[$this->primaryKey()])) ?? null;
     }
 
+    /**
+     * Get Primary Key Name
+     */
+    public function primaryKey()
+    {
+        return $this->primaryKey ?? 'Id';
+    }
+
+    /**
+     * Get all attributes
+     *
+     * @return array
+     */
     public function getAttributes()
     {
         return $this->attributes;
-    }
-
-    public function save()
-    {
-        $client = new \App\Services\Client();
-        try {
-            $response = $client->request($this->objectUrl(), $this->attributes, Auth::authorisationHeader());
-        } catch (\Exception $e) {
-            dd($e->getMessage(), $e->getTraceAsString());
-        }
-
-        dd($response->getBody()->getContents());
     }
 
     /**
@@ -131,7 +209,7 @@ abstract class Model
      */
     public function __toString()
     {
-        return $this->getId();
+        return json_encode($this->attributes);
     }
 
     /**
@@ -144,7 +222,7 @@ abstract class Model
         $describeUrl = config('salesforce.instance') . '/services/data/v20.0/sobjects/' . $this->getObjectName() . '/describe';
 
         try {
-            $client = new \App\Services\Client();
+            $client = new Client();
             $response = $client->request($describeUrl, null, Auth::authorisationHeader());
         } catch (\Exception $e) {
             return 'Could not retrieve data: ' . $e->getMessage() . $e->getTraceAsString();
@@ -154,5 +232,43 @@ abstract class Model
         return $response->getBody()->getContents();
     }
 
+    /**
+     * Error Handling
+     *
+     * @param Exception $e
+     */
+    protected function error(Exception $e)
+    {
+        dd($e->getMessage(), $e->getTraceAsString(), __LINE__);
+    }
 
+    /**
+     * Decode Body Response
+     *
+     * @param $response
+     * @return mixed
+     */
+    protected function jsonDecodeBodyResponse($response)
+    {
+        return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * Magic Get method
+     *
+     * @param $name
+     * @return bool|mixed
+     */
+    public function __get($name)
+    {
+        if (! empty($this->attributes[$name])) {
+            return $this->attributes[$name];
+        }
+
+        if (! empty($this->attributes[strtolower($name)])) {
+            return $this->attributes[strtolower($name)];
+        }
+
+        return false;
+    }
 }
