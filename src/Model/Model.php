@@ -128,6 +128,38 @@ abstract class Model
     }
 
     /**
+     * Find Record where it matches the attributes
+     *
+     * @param array $attributes
+     * @return mixed
+     * @throws \Illuminate\Container\EntryNotFoundException
+     * @throws ConnectionNotSetException
+     */
+    public static function findWhere(array $attributes)
+    {
+        $client = new Client();
+
+        $instance = static::newInstance();
+
+        $where = [];
+
+        if (! empty($attributes)) {
+            foreach($attributes as $key=>$attribute) {
+                $where[] = $key . " = '" . $attribute . "'";
+            }
+        }
+
+        $url = $instance->getQueryConnection(http_build_query([
+                'q' => 'SELECT Id FROM ' . static::getObjectName() . ' WHERE ' . implode(' AND ', $attributes)
+            ]));
+
+        $response = $client->request($url, null, Auth::authorisationHeader());
+
+        return $response->getBody()->getContents();
+
+    }
+
+    /**
      * Fill Attributes
      *
      * @param $data
@@ -159,6 +191,22 @@ abstract class Model
     {
         if (! empty($this->baseUrl) && ! empty($this->objectUrl)) {
             return (empty($path)) ? $this->baseUrl . $this->objectUrl : $this->baseUrl . $this->objectUrl . '/' . $path;
+        }
+
+        throw new ConnectionNotSetException('The objectUrl has not been set on the class');
+    }
+
+    /**
+     * Query Connection
+     *
+     * @param string $path
+     * @return string
+     * @throws ConnectionNotSetException
+     */
+    public function getQueryConnection(string $path = '')
+    {
+        if (! empty($this->baseUrl) && ! empty($this->objectUrl)) {
+            return (empty($path)) ? $this->baseUrl . 'services/data/v20.0/query' : $this->baseUrl . 'services/data/v20.0/query' . '/' . $path;
         }
 
         throw new ConnectionNotSetException('The objectUrl has not been set on the class');
