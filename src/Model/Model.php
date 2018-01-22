@@ -3,8 +3,9 @@
 namespace Midnite81\Salesforce\Model;
 
 use App\Services\Auth;
-use App\Services\Client;
+use Midnite81\Salesforce\Services\Client;
 use Exception;
+use Midnite81\Salesforce\Builder\QueryBuilder;
 use Midnite81\Salesforce\Exceptions\ActiveRecordNotSetException;
 use Midnite81\Salesforce\Exceptions\ConnectionNotSetException;
 
@@ -99,6 +100,48 @@ abstract class Model
         $data = json_decode($response->getBody()->getContents());
 
         return static::find($data->id);
+    }
+
+    /**
+     * @param QueryBuilder $query
+     * @param bool         $first
+     * @return \Illuminate\Support\Collection
+     */
+    public function executeQuery(QueryBuilder $query, $first = false)
+    {
+        try {
+            $url = $this->getQueryConnection(http_build_query([
+                'q' => $query->toSql()
+            ]));
+            $client = new Client();
+            $response = $client->request($url, null, Auth::authorisationHeader());
+        } catch (\Exception $e) {
+            $this->error($e);
+        }
+
+        if ($first) {
+            return collect(json_decode($response->getBody()->getContents())->records[0]);
+        }
+
+        return collect(json_decode($response->getBody()->getContents()));
+    }
+
+    /**
+     * Get all
+     */
+    public static function get()
+    {
+        $instance = static::newInstance();
+
+        try {
+            $url = $instance->getQueryConnection();
+            $client = new Client();
+            $response = $client->request($url, null, Auth::authorisationHeader());
+        } catch (\Exception $e) {
+            $instance->error($e);
+        }
+
+        return collect(json_decode($response->getBody()->getContents()));
     }
 
     /**
@@ -199,14 +242,14 @@ abstract class Model
     /**
      * Query Connection
      *
-     * @param string $path
+     * @param string $query
      * @return string
      * @throws ConnectionNotSetException
      */
-    public function getQueryConnection(string $path = '')
+    public function getQueryConnection(string $query = '')
     {
         if (! empty($this->baseUrl) && ! empty($this->objectUrl)) {
-            return (empty($path)) ? $this->baseUrl . 'services/data/v20.0/query' : $this->baseUrl . 'services/data/v20.0/query' . '/' . $path;
+            return (empty($query)) ? $this->baseUrl . '/services/data/v20.0/query' : $this->baseUrl . '/services/data/v20.0/query?' . $query;
         }
 
         throw new ConnectionNotSetException('The objectUrl has not been set on the class');
@@ -219,7 +262,7 @@ abstract class Model
      */
     public function getObjectName()
     {
-        return basename($this->objectUrl());
+        return basename($this->objectUrl);
     }
 
     /**
@@ -309,6 +352,7 @@ abstract class Model
      */
     public function __get($name)
     {
+
         if (! empty($this->attributes[$name])) {
             return $this->attributes[$name];
         }
@@ -319,4 +363,13 @@ abstract class Model
 
         return false;
     }
+
+    /**
+     * Magic Method __call
+     */
+    public function __call($method, $arguments)
+    {
+        return (new QueryBuilder($this))->$method(...$arguments);
+    }
+
 }
