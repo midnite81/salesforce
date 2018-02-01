@@ -51,7 +51,7 @@ abstract class Model
      *
      * @return static
      */
-    protected static function newInstance()
+    public static function newInstance()
     {
         return new static();
     }
@@ -120,7 +120,11 @@ abstract class Model
         }
 
         if ($first) {
-            return collect(json_decode($response->getBody()->getContents())->records[0]);
+            $data = json_decode($response->getBody()->getContents());
+            if (! empty($data->records[0])) {
+                return collect($data->records[0]);
+            }
+            return null;
         }
 
         return collect(json_decode($response->getBody()->getContents()));
@@ -193,7 +197,7 @@ abstract class Model
         }
 
         $url = $instance->getQueryConnection(http_build_query([
-                'q' => 'SELECT Id FROM ' . static::getObjectName() . ' WHERE ' . implode(' AND ', $attributes)
+                'q' => 'SELECT Id FROM ' . $instance->getObjectName() . ' WHERE ' . implode(' AND ', $where)
             ]));
 
         $response = $client->request($url, null, Auth::authorisationHeader());
