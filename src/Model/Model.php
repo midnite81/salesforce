@@ -131,6 +131,34 @@ abstract class Model
     }
 
     /**
+     * @param string $query
+     * @param bool   $first
+     * @return \Illuminate\Support\Collection
+     */
+    public function executeQueryRaw(string $query, $first = false)
+    {
+        try {
+            $url = $this->getQueryConnection(http_build_query([
+                'q' => $query
+            ]));
+            $client = new Client();
+            $response = $client->request($url, null, Auth::authorisationHeader());
+        } catch (\Exception $e) {
+            $this->error($e);
+        }
+
+        if ($first) {
+            $data = json_decode($response->getBody()->getContents());
+            if (! empty($data->records[0])) {
+                return collect($data->records[0]);
+            }
+            return null;
+        }
+
+        return collect(json_decode($response->getBody()->getContents()));
+    }
+
+    /**
      * Get all
      */
     public static function get()
