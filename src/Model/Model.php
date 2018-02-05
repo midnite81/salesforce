@@ -43,7 +43,7 @@ abstract class Model
     public function __construct($attributes = [])
     {
         $this->fillAttributes($attributes);
-        $this->baseUrl = config('salesforce.instance');
+        $this->baseUrl = config('salesforce.devinstance');
     }
 
     /**
@@ -362,6 +362,7 @@ abstract class Model
      */
     protected function error(Exception $e)
     {
+        // TODO: UPDATE
         dd($e->getMessage(), $e->getTraceAsString(), __LINE__);
     }
 

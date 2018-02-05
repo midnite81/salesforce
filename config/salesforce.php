@@ -1,16 +1,6 @@
 <?php
 return [
 
-    /*
-     |--------------------------------------------------------------------------
-     | Instance URL
-     |--------------------------------------------------------------------------
-     |
-     | This is the base url of the instance in Salesforce your application resides on
-     |
-     */
-    'instance' => 'https://cs81.salesforce.com',
-
     'app_name' => '',
 
     'api_name' => '',
@@ -19,9 +9,11 @@ return [
 
     'environment' => env('SALESFORCE_ENVIRONMENT', 'development'),
 
-    'oauth' => [
+    'environments' => [
 
         'development' => [
+
+            'instance' => env('DEVELOPMENT_SF_BASE_URL'),
 
             'consumer_key' => env('DEVELOPMENT_SF_CONSUMER_KEY'),
 
@@ -39,7 +31,9 @@ return [
 
         ],
 
-        'live' => [
+        'production' => [
+
+            'instance' => env('LIVE_SF_BASE_URL'),
 
             'consumer_key' => env('LIVE_SF_CONSUMER_KEY'),
 
@@ -54,8 +48,6 @@ return [
             'username' =>  env('LIVE_SF_USERNAME'),
 
             'password' => env('LIVE_SF_USERNAME'),
-
-
         ],
 
     ],
