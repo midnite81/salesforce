@@ -43,7 +43,7 @@ abstract class Model
     public function __construct($attributes = [])
     {
         $this->fillAttributes($attributes);
-        $this->baseUrl = config('salesforce.devinstance');
+        $this->baseUrl = config('salesforce.instance');
     }
 
     /**

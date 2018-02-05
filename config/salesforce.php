@@ -49,6 +49,5 @@ return [
 
             'password' => env('LIVE_SF_USERNAME'),
         ],
-
     ],
 ];
