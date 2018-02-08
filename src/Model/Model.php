@@ -197,7 +197,7 @@ abstract class Model
             try {
                 $response = $client->patch($url, $data, Auth::authorisationHeader());
             } catch (\Exception $e) {
-                return return $this->error($e);
+                return $this->error($e);
             }
 
             return $this->jsonDecodeBodyResponse($response);
