@@ -61,6 +61,7 @@ abstract class Model
      *
      * @param $id
      * @return mixed|string
+     * @throws \Illuminate\Container\EntryNotFoundException
      */
     public static function find($id)
     {
@@ -84,6 +85,7 @@ abstract class Model
      *
      * @param array $data
      * @return mixed
+     * @throws \Illuminate\Container\EntryNotFoundException
      */
     public static function create(array $data = [])
     {
@@ -94,7 +96,7 @@ abstract class Model
             $client = new Client();
             $response = $client->request($url, $data, Auth::authorisationHeader());
         } catch (\Exception $e) {
-            $instance->error($e);
+            return $instance->error($e);
         }
 
         $data = json_decode($response->getBody()->getContents());
@@ -106,6 +108,7 @@ abstract class Model
      * @param QueryBuilder $query
      * @param bool         $first
      * @return \Illuminate\Support\Collection
+     * @throws \Illuminate\Container\EntryNotFoundException
      */
     public function executeQuery(QueryBuilder $query, $first = false)
     {
@@ -116,7 +119,7 @@ abstract class Model
             $client = new Client();
             $response = $client->request($url, null, Auth::authorisationHeader());
         } catch (\Exception $e) {
-            $this->error($e);
+            return $this->error($e);
         }
 
         if ($first) {
@@ -134,6 +137,7 @@ abstract class Model
      * @param string $query
      * @param bool   $first
      * @return \Illuminate\Support\Collection
+     * @throws \Illuminate\Container\EntryNotFoundException
      */
     public function executeQueryRaw(string $query, $first = false)
     {
@@ -144,7 +148,7 @@ abstract class Model
             $client = new Client();
             $response = $client->request($url, null, Auth::authorisationHeader());
         } catch (\Exception $e) {
-            $this->error($e);
+            return $this->error($e);
         }
 
         if ($first) {
@@ -170,7 +174,7 @@ abstract class Model
             $client = new Client();
             $response = $client->request($url, null, Auth::authorisationHeader());
         } catch (\Exception $e) {
-            $instance->error($e);
+            return $instance->error($e);
         }
 
         return collect(json_decode($response->getBody()->getContents()));
@@ -193,7 +197,7 @@ abstract class Model
             try {
                 $response = $client->patch($url, $data, Auth::authorisationHeader());
             } catch (\Exception $e) {
-                return $this->error($e);
+                return return $this->error($e);
             }
 
             return $this->jsonDecodeBodyResponse($response);
@@ -339,6 +343,7 @@ abstract class Model
      * Get the definition of the object
      *
      * @return string
+     * @throws \Illuminate\Container\EntryNotFoundException
      */
     public function describe()
     {
@@ -359,9 +364,11 @@ abstract class Model
      * Error Handling
      *
      * @param Exception $e
+     * @return Exception
      */
     protected function error(Exception $e)
     {
+        return $e;
         // TODO: UPDATE
         dd($e->getMessage(), $e->getTraceAsString(), __LINE__);
     }
