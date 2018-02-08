@@ -166,7 +166,7 @@ abstract class Model
         $instance = static::newInstance();
 
         try {
-            $url = $instance->getQueryConnection();
+            $url = $instance->getConnection();
             $client = new Client();
             $response = $client->request($url, null, Auth::authorisationHeader());
         } catch (\Exception $e) {
