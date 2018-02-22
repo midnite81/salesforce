@@ -1,4 +1,4 @@
-x<?php
+<?php
 
 namespace Midnite81\Salesforce\Model;
 
