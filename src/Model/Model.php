@@ -368,7 +368,7 @@ abstract class Model
      */
     protected function error(Exception $e)
     {
-        return $e;
+        throw $e;
     }
 
     /**
