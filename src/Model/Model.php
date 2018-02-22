@@ -72,7 +72,7 @@ abstract class Model
             $client = new Client();
             $response = $client->request($url, null, Auth::authorisationHeader());
         } catch (\Exception $e) {
-            return 'Could not retrieve data: ' . $e->getMessage() . $e->getTraceAsString();
+            return $this->error($e);
         }
 
         $instance->fillAttributes($response->getBody()->getContents());
