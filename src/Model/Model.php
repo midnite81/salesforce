@@ -1,4 +1,4 @@
-<?php
+x<?php
 
 namespace Midnite81\Salesforce\Model;
 
@@ -72,7 +72,7 @@ abstract class Model
             $client = new Client();
             $response = $client->request($url, null, Auth::authorisationHeader());
         } catch (\Exception $e) {
-            return $this->error($e);
+            return $instance->error($e);
         }
 
         $instance->fillAttributes($response->getBody()->getContents());
@@ -369,8 +369,6 @@ abstract class Model
     protected function error(Exception $e)
     {
         return $e;
-        // TODO: UPDATE
-        dd($e->getMessage(), $e->getTraceAsString(), __LINE__);
     }
 
     /**
