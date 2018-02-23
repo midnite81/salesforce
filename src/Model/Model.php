@@ -364,7 +364,7 @@ abstract class Model
      * Error Handling
      *
      * @param Exception $e
-     * @return Exception
+     * @throws Exception
      */
     protected function error(Exception $e)
     {
