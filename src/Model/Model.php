@@ -72,7 +72,7 @@ abstract class Model
             $client = new Client();
             $response = $client->request($url, null, Auth::authorisationHeader());
         } catch (\Exception $e) {
-            return $this->error($e);
+            return $instance->error($e);
         }
 
         $instance->fillAttributes($response->getBody()->getContents());
@@ -308,7 +308,7 @@ abstract class Model
      */
     public function getId()
     {
-        return (! empty($this->attributes[$this->primaryKey()])) ?? null;
+        return (! empty($this->attributes[$this->primaryKey()])) ? $this->attributes[$this->primaryKey()] : null;
     }
 
     /**
@@ -316,7 +316,7 @@ abstract class Model
      */
     public function primaryKey()
     {
-        return $this->primaryKey ?? 'Id';
+        return $this->primaryKey ?: 'Id';
     }
 
     /**
