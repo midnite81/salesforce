@@ -49,8 +49,8 @@ abstract class Model
     public function __construct($attributes = [])
     {
         $this->fillAttributes($attributes);
-        $this->baseUrl = $this->config['instance'];
         $this->config = $this->setConfig();
+        $this->baseUrl = $this->config['instance'];
     }
 
     /**
