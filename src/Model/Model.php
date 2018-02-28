@@ -49,7 +49,7 @@ abstract class Model
     public function __construct($attributes = [])
     {
         $this->fillAttributes($attributes);
-        $this->baseUrl = config('salesforce.instance');
+        $this->baseUrl = $this->config['instance'];
         $this->config = $this->setConfig();
     }
 
@@ -281,8 +281,8 @@ abstract class Model
     public function getConnection(string $path = '')
     {
         if (! empty($this->baseUrl) && ! empty($this->object)) {
-            return (empty($path)) ? $this->baseUrl . $this->config['sobjects_url'] . '/' . $this->getObjectName() :
-                            $this->baseUrl . $this->config['sobjects_url'] . '/' . $this->getObjectName() . '/' . $path;
+            return (empty($path)) ? $this->config['instance'] . '/' . $this->config['sobjects_url'] . '/' . $this->getObjectName() :
+                    $this->config['instance'] . '/' . $this->config['sobjects_url'] . '/' . $this->getObjectName() . '/' . $path;
         }
 
         throw new ConnectionNotSetException('The object property has not been set on the class');
@@ -298,7 +298,8 @@ abstract class Model
     public function getQueryConnection(string $query = '')
     {
         if (! empty($this->baseUrl) && ! empty($this->object)) {
-            return (empty($query)) ? $this->baseUrl . '/' . $this->config['query_url'] : $this->baseUrl . '/'. $this->config['query_url'] .'?' . $query;
+            return (empty($query)) ? $this->config['instance'] . '/' . $this->config['query_url'] :
+                                        $this->baseUrl . '/'. $this->config['query_url'] .'?' . $query;
 
         }
 
@@ -361,7 +362,7 @@ abstract class Model
      */
     public function describe()
     {
-        $describeUrl = config('salesforce.instance') . '/' . $this->config['sobjects_url'] . '/' . $this->getObjectName() . '/describe';
+        $describeUrl = $this->config['instance'] . '/' . $this->config['sobjects_url'] . '/' . $this->getObjectName() . '/describe';
 
         try {
             $client = new Client();
