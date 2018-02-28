@@ -280,11 +280,12 @@ abstract class Model
      */
     public function getConnection(string $path = '')
     {
-        if (! empty($this->baseUrl) && ! empty($this->objectUrl)) {
-            return (empty($path)) ? $this->baseUrl . $this->objectUrl : $this->baseUrl . $this->objectUrl . '/' . $path;
+        if (! empty($this->baseUrl) && ! empty($this->object)) {
+            return (empty($path)) ? $this->baseUrl . $this->config['sobjects_url'] . '/' . $this->getObjectName() :
+                            $this->baseUrl . $this->config['sobjects_url'] . '/' . $this->getObjectName() . '/' . $path;
         }
 
-        throw new ConnectionNotSetException('The objectUrl has not been set on the class');
+        throw new ConnectionNotSetException('The object property has not been set on the class');
     }
 
     /**
@@ -296,12 +297,12 @@ abstract class Model
      */
     public function getQueryConnection(string $query = '')
     {
-        if (! empty($this->baseUrl) && ! empty($this->objectUrl)) {
+        if (! empty($this->baseUrl) && ! empty($this->object)) {
             return (empty($query)) ? $this->baseUrl . '/' . $this->config['query_url'] : $this->baseUrl . '/'. $this->config['query_url'] .'?' . $query;
 
         }
 
-        throw new ConnectionNotSetException('The objectUrl has not been set on the class');
+        throw new ConnectionNotSetException('The object has not been set on the class');
     }
 
     /**
@@ -311,7 +312,7 @@ abstract class Model
      */
     public function getObjectName()
     {
-        return '/' . $this->object;
+        return $this->object;
     }
 
     /**
