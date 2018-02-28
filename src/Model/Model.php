@@ -297,7 +297,8 @@ abstract class Model
     public function getQueryConnection(string $query = '')
     {
         if (! empty($this->baseUrl) && ! empty($this->objectUrl)) {
-            return (empty($query)) ? $this->baseUrl . '/services/data/v20.0/query' : $this->baseUrl . '/services/data/v20.0/query?' . $query;
+            return (empty($query)) ? $this->baseUrl . '/' . $this->config['query_url'] : $this->baseUrl . '/'. $this->config['query_url'] .'?' . $query;
+
         }
 
         throw new ConnectionNotSetException('The objectUrl has not been set on the class');
@@ -359,7 +360,7 @@ abstract class Model
      */
     public function describe()
     {
-        $describeUrl = config('salesforce.instance') . '/services/data/v20.0/sobjects/' . $this->getObjectName() . '/describe';
+        $describeUrl = config('salesforce.instance') . '/' . $this->config['sobjects_url'] . '/' . $this->getObjectName() . '/describe';
 
         try {
             $client = new Client();
@@ -420,6 +421,11 @@ abstract class Model
     public function __call($method, $arguments)
     {
         return (new QueryBuilder($this))->$method(...$arguments);
+    }
+
+    public function getConfig()
+    {
+        return $this->config;
     }
 
     protected function setConfig()
