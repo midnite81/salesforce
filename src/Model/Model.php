@@ -16,7 +16,7 @@ abstract class Model
      *
      * @var string
      */
-    protected $objectUrl;
+    protected $object;
 
     /**
      * The attributes which get filled on the model
@@ -311,7 +311,7 @@ abstract class Model
      */
     public function getObjectName()
     {
-        return basename($this->objectUrl);
+        return '/' . $this->object;
     }
 
     /**
