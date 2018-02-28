@@ -39,11 +39,18 @@ abstract class Model
      */
     protected $baseUrl;
 
+    protected $config;
 
+
+    /**
+     * Model constructor.
+     * @param array $attributes
+     */
     public function __construct($attributes = [])
     {
         $this->fillAttributes($attributes);
         $this->baseUrl = config('salesforce.instance');
+        $this->config = $this->setConfig();
     }
 
     /**
@@ -413,6 +420,18 @@ abstract class Model
     public function __call($method, $arguments)
     {
         return (new QueryBuilder($this))->$method(...$arguments);
+    }
+
+    protected function setConfig()
+    {
+        $config = config('salesforce');
+        $environment = config('salesforce.environment');
+
+        if (!empty($config['environments'][$environment])) {
+            return $config('salesforce.environments.' . $environment);
+        }
+
+        return null;
     }
 
 }
