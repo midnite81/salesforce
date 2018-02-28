@@ -428,7 +428,7 @@ abstract class Model
         $environment = config('salesforce.environment');
 
         if (!empty($config['environments'][$environment])) {
-            return $config('salesforce.environments.' . $environment);
+            return config('salesforce.environments.' . $environment);
         }
 
         return null;
