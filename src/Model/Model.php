@@ -62,6 +62,7 @@ abstract class Model
      * @param $id
      * @return mixed|string
      * @throws \Illuminate\Container\EntryNotFoundException
+     * @throws Exception
      */
     public static function find($id)
     {
@@ -86,6 +87,7 @@ abstract class Model
      * @param array $data
      * @return mixed
      * @throws \Illuminate\Container\EntryNotFoundException
+     * @throws Exception
      */
     public static function create(array $data = [])
     {
@@ -106,9 +108,10 @@ abstract class Model
 
     /**
      * @param QueryBuilder $query
-     * @param bool         $first
+     * @param bool $first
      * @return \Illuminate\Support\Collection
      * @throws \Illuminate\Container\EntryNotFoundException
+     * @throws Exception
      */
     public function executeQuery(QueryBuilder $query, $first = false)
     {
@@ -135,9 +138,10 @@ abstract class Model
 
     /**
      * @param string $query
-     * @param bool   $first
+     * @param bool $first
      * @return \Illuminate\Support\Collection
      * @throws \Illuminate\Container\EntryNotFoundException
+     * @throws Exception
      */
     public function executeQueryRaw(string $query, $first = false)
     {
@@ -187,6 +191,7 @@ abstract class Model
      * @return mixed
      * @throws ConnectionNotSetException
      * @throws ActiveRecordNotSetException
+     * @throws Exception
      */
     public function update(array $data = [])
     {
