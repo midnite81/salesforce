@@ -29,6 +29,5 @@
                 "Midnite81\\Salesforce\\SalesforceServiceProvider"
             ]
         }
-    },
-    "require": {}
+    }
 }
