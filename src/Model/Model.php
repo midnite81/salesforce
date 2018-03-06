@@ -2,7 +2,7 @@
 
 namespace Midnite81\Salesforce\Model;
 
-use App\Services\Auth;
+use Midnite81\Salesforce\Services\Auth;
 use Midnite81\Salesforce\Services\Client;
 use Exception;
 use Midnite81\Salesforce\Builder\QueryBuilder;
