@@ -43,6 +43,11 @@ class QueryBuilder
         }
     }
 
+    /**
+     * @return \Illuminate\Support\Collection
+     * @throws \Exception
+     * @throws \Illuminate\Container\EntryNotFoundException
+     */
     public function get()
     {
         if ($this->model instanceof Model) {
@@ -50,10 +55,16 @@ class QueryBuilder
         }
     }
 
-    public function first()
+    /**
+     * @param bool $returnModel
+     * @return \Illuminate\Support\Collection
+     * @throws \Exception
+     * @throws \Illuminate\Container\EntryNotFoundException
+     */
+    public function first($returnModel = false)
     {
         if ($this->model instanceof Model) {
-            return $this->model->executeQuery($this, true);
+            return $this->model->executeQuery($this, true, $returnModel);
         }
     }
 

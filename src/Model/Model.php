@@ -115,12 +115,13 @@ abstract class Model
 
     /**
      * @param QueryBuilder $query
-     * @param bool $first
+     * @param bool         $first
+     * @param bool         $returnModel
      * @return \Illuminate\Support\Collection
-     * @throws \Illuminate\Container\EntryNotFoundException
      * @throws Exception
+     * @throws \Illuminate\Container\EntryNotFoundException
      */
-    public function executeQuery(QueryBuilder $query, $first = false)
+    public function executeQuery(QueryBuilder $query, $first = false, $returnModel = false)
     {
         try {
             $url = $this->getQueryConnection(http_build_query([
@@ -134,8 +135,11 @@ abstract class Model
 
         if ($first) {
             $data = json_decode($response->getBody()->getContents());
-            if (! empty($data->records[0])) {
+            if (! empty($data->records[0]) && ! $returnModel) {
                 return collect($data->records[0]);
+            }
+            if (! empty($data->records[0]) && $returnModel) {
+                return static::find($data->records[0]['Id']);
             }
             return null;
         }
