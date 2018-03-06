@@ -20,5 +20,12 @@
         }
     },
     "minimum-stability": "stable",
+    "extra" : {
+        "laravel" : {
+            "providers" : [
+                "Midnite81\\Salesforce\\SalesforceServiceProvider"
+            ]
+        }
+    },
     "require": {}
 }
