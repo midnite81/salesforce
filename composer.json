@@ -9,6 +9,9 @@
             "email": "webdev@centralblue.co.uk"
         }
     ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    }
     "autoload": {
         "psr-4": {
             "Midnite81\\Salesforce\\": "src/"
