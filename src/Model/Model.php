@@ -16,7 +16,7 @@ abstract class Model
      *
      * @var string
      */
-    protected $objectUrl;
+    protected $object;
 
     /**
      * The attributes which get filled on the model
@@ -39,11 +39,18 @@ abstract class Model
      */
     protected $baseUrl;
 
+    protected $config;
 
+
+    /**
+     * Model constructor.
+     * @param array $attributes
+     */
     public function __construct($attributes = [])
     {
         $this->fillAttributes($attributes);
-        $this->baseUrl = config('salesforce.instance');
+        $this->config = $this->setConfig();
+        $this->baseUrl = $this->config['instance'];
     }
 
     /**
@@ -62,6 +69,7 @@ abstract class Model
      * @param $id
      * @return mixed|string
      * @throws \Illuminate\Container\EntryNotFoundException
+     * @throws Exception
      */
     public static function find($id)
     {
@@ -86,6 +94,7 @@ abstract class Model
      * @param array $data
      * @return mixed
      * @throws \Illuminate\Container\EntryNotFoundException
+     * @throws Exception
      */
     public static function create(array $data = [])
     {
@@ -106,9 +115,10 @@ abstract class Model
 
     /**
      * @param QueryBuilder $query
-     * @param bool         $first
+     * @param bool $first
      * @return \Illuminate\Support\Collection
      * @throws \Illuminate\Container\EntryNotFoundException
+     * @throws Exception
      */
     public function executeQuery(QueryBuilder $query, $first = false)
     {
@@ -135,9 +145,10 @@ abstract class Model
 
     /**
      * @param string $query
-     * @param bool   $first
+     * @param bool $first
      * @return \Illuminate\Support\Collection
      * @throws \Illuminate\Container\EntryNotFoundException
+     * @throws Exception
      */
     public function executeQueryRaw(string $query, $first = false)
     {
@@ -187,6 +198,7 @@ abstract class Model
      * @return mixed
      * @throws ConnectionNotSetException
      * @throws ActiveRecordNotSetException
+     * @throws Exception
      */
     public function update(array $data = [])
     {
@@ -268,11 +280,12 @@ abstract class Model
      */
     public function getConnection(string $path = '')
     {
-        if (! empty($this->baseUrl) && ! empty($this->objectUrl)) {
-            return (empty($path)) ? $this->baseUrl . $this->objectUrl : $this->baseUrl . $this->objectUrl . '/' . $path;
+        if (! empty($this->baseUrl) && ! empty($this->object)) {
+            return (empty($path)) ? $this->config['instance'] . '/' . $this->config['sobjects_url'] . '/' . $this->getObjectName() :
+                    $this->config['instance'] . '/' . $this->config['sobjects_url'] . '/' . $this->getObjectName() . '/' . $path;
         }
 
-        throw new ConnectionNotSetException('The objectUrl has not been set on the class');
+        throw new ConnectionNotSetException('The object property has not been set on the class');
     }
 
     /**
@@ -284,11 +297,13 @@ abstract class Model
      */
     public function getQueryConnection(string $query = '')
     {
-        if (! empty($this->baseUrl) && ! empty($this->objectUrl)) {
-            return (empty($query)) ? $this->baseUrl . '/services/data/v20.0/query' : $this->baseUrl . '/services/data/v20.0/query?' . $query;
+        if (! empty($this->baseUrl) && ! empty($this->object)) {
+            return (empty($query)) ? $this->config['instance'] . '/' . $this->config['query_url'] :
+                                        $this->baseUrl . '/'. $this->config['query_url'] .'?' . $query;
+
         }
 
-        throw new ConnectionNotSetException('The objectUrl has not been set on the class');
+        throw new ConnectionNotSetException('The object has not been set on the class');
     }
 
     /**
@@ -298,7 +313,7 @@ abstract class Model
      */
     public function getObjectName()
     {
-        return basename($this->objectUrl);
+        return $this->object;
     }
 
     /**
@@ -347,7 +362,7 @@ abstract class Model
      */
     public function describe()
     {
-        $describeUrl = config('salesforce.instance') . '/services/data/v20.0/sobjects/' . $this->getObjectName() . '/describe';
+        $describeUrl = $this->config['instance'] . '/' . $this->config['sobjects_url'] . '/' . $this->getObjectName() . '/describe';
 
         try {
             $client = new Client();
@@ -364,13 +379,11 @@ abstract class Model
      * Error Handling
      *
      * @param Exception $e
-     * @return Exception
+     * @throws Exception
      */
     protected function error(Exception $e)
     {
-        return $e;
-        // TODO: UPDATE
-        dd($e->getMessage(), $e->getTraceAsString(), __LINE__);
+        throw $e;
     }
 
     /**
@@ -410,6 +423,23 @@ abstract class Model
     public function __call($method, $arguments)
     {
         return (new QueryBuilder($this))->$method(...$arguments);
+    }
+
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    protected function setConfig()
+    {
+        $config = config('salesforce');
+        $environment = config('salesforce.environment');
+
+        if (!empty($config['environments'][$environment])) {
+            return config('salesforce.environments.' . $environment);
+        }
+
+        return null;
     }
 
 }

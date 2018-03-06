@@ -21,6 +21,10 @@ return [
 
             'sf_base_url' => env('DEVELOPMENT_SF_BASE_URL', 'https://cs81.salesforce.com'),
 
+            'sobjects_url' => env('DEVELOPMENT_SF_SOBJECTS_QUERY', 'services/data/v39.0/sobjects'),
+
+            'query_url' => env('DEVELOPMENT_SF_SOQL_QUERY', 'services/data/v20.0/query'),
+
             'callback' => str_contains(env('DEVELOPMENT_SF_CALLBACK_ROUTE'), 'http') || empty(env('DEVELOPMENT_SF_CALLBACK_ROUTE'))?
                 env('DEVELOPMENT_SF_CALLBACK_ROUTE') :
                 route(env('DEVELOPMENT_SF_CALLBACK_ROUTE')),
@@ -40,6 +44,10 @@ return [
             'consumer_secret' => env('LIVE_SF_CONSUMER_SECRET'),
 
             'sf_base_url' => env('LIVE_SF_BASE_URL', 'https://cs81.salesforce.com'),
+
+            'sobjects_url' => env('LIVE_SF_SOBJECTS_QUERY', 'services/data/v39.0/sobjects'),
+
+            'query_url' => env('LIVE_SF_SOQL_QUERY', 'services/data/v20.0/query'),
 
             'callback' => str_contains(env('LIVE_SF_CALLBACK_ROUTE'), 'http') || empty(env('LIVE_SF_CALLBACK_ROUTE')) ?
                 env('LIVE_SF_CALLBACK_ROUTE') :
