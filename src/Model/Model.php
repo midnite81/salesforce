@@ -425,6 +425,19 @@ abstract class Model
         return (new QueryBuilder($this))->$method(...$arguments);
     }
 
+    /**
+     * Magic Method __callStatic
+     *
+     * @param $method
+     * @param $arguments
+     * @return mixed
+     */
+    public static function __callStatic($method, $arguments)
+    {
+        return (new QueryBuilder(static::newInstance()))->$method(...$arguments);
+    }
+
+
     public function getConfig()
     {
         return $this->config;
