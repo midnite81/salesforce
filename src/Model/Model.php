@@ -139,7 +139,7 @@ abstract class Model
                 return collect($data->records[0]);
             }
             if (! empty($data->records[0]) && $returnModel) {
-                return static::find($data->records[0]['Id']);
+                return static::find($data->records[0]->Id);
             }
             return null;
         }
