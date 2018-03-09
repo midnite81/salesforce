@@ -15,16 +15,16 @@
     "autoload": {
         "psr-4": {
             "Midnite81\\Salesforce\\": "src/"
-        }
+        },
+        "files": [
+            "src/Helper/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Midnite81\\Salesforce\\Tests\\": "tests/"
         }
     },
-    "files": [
-        "src/Helper/helpers.php"
-    ],
     "minimum-stability": "stable",
     "extra" : {
         "laravel" : {
