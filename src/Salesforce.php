@@ -2,7 +2,7 @@
 
 namespace Midnite81\Salesforce;
 
-use GuzzleHttp\Client;
+use Midnite81\Salesforce\Services\Client;
 use Illuminate\Filesystem\Filesystem;
 use Midnite81\Salesforce\Services\Json;
 
