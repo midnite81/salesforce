@@ -25,9 +25,5 @@ class SalesforceServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/salesforce.php', 'salesforce');
-
-        foreach (glob(__DIR__ . '/Helpers/*.php') as $filename) {
-            require_once($filename);
-        }
     }
 }

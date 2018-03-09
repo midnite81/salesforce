@@ -22,6 +22,9 @@
             "Midnite81\\Salesforce\\Tests\\": "tests/"
         }
     },
+    "files": [
+        "src/Helper/helpers.php"
+    ],
     "minimum-stability": "stable",
     "extra" : {
         "laravel" : {
