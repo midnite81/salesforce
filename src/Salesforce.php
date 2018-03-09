@@ -61,11 +61,11 @@ class Salesforce
     protected function requestData($url, $data = [])
     {
         if (!empty($data)) {
-            $request = $this->guzzle->post($url, [
+            $request = $this->client->post($url, [
                 'form_params' => $data
             ]);
         } else {
-            $request = $this->guzzle->get($url);
+            $request = $this->client->get($url);
         }
 
         $contents = $request->getBody()->getContents();
