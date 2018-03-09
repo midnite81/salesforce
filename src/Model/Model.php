@@ -349,6 +349,26 @@ abstract class Model
     }
 
     /**
+     * Model is not empty
+     *
+     * @return bool
+     */
+    public function isNotEmpty()
+    {
+        return ! empty($this->attributes);
+    }
+
+    /**
+     * Model is Empty
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->attributes);
+    }
+
+    /**
      * ToString
      *
      * @return bool|null
