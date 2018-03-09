@@ -3,6 +3,7 @@
 namespace Midnite81\Salesforce;
 
 use Illuminate\Support\ServiceProvider;
+use Midnite81\Commands\GetToken;
 
 class SalesforceServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,9 @@ class SalesforceServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../config/salesforce.php' => config_path('salesforce.php')
+        ]);
+        $this->commands([
+            GetToken::class,
         ]);
     }
     /**
