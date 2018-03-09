@@ -154,7 +154,7 @@ abstract class Model
      * @throws \Illuminate\Container\EntryNotFoundException
      * @throws Exception
      */
-    public function executeQueryRaw(string $query, $first = false)
+    public function executeQueryRaw($query, $first = false)
     {
         try {
             $url = $this->getQueryConnection(http_build_query([
@@ -282,7 +282,7 @@ abstract class Model
      * @return string
      * @throws ConnectionNotSetException
      */
-    public function getConnection(string $path = '')
+    public function getConnection($path = '')
     {
         if (! empty($this->baseUrl) && ! empty($this->object)) {
             return (empty($path)) ? $this->config['instance'] . '/' . $this->config['sobjects_url'] . '/' . $this->getObjectName() :
@@ -299,7 +299,7 @@ abstract class Model
      * @return string
      * @throws ConnectionNotSetException
      */
-    public function getQueryConnection(string $query = '')
+    public function getQueryConnection($query = '')
     {
         if (! empty($this->baseUrl) && ! empty($this->object)) {
             return (empty($query)) ? $this->config['instance'] . '/' . $this->config['query_url'] :
