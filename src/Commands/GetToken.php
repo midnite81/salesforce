@@ -1,6 +1,6 @@
 <?php
 
-namespace Midnite81\Commands;
+namespace Midnite81\Salesforce\Commands;
 
 use GuzzleHttp\Client;
 use Midnite81\Salesforce\Services\Json;
