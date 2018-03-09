@@ -20,8 +20,8 @@ class Salesforce
 
     public function __construct()
     {
-        $client = app(Client::class);
-        $filesystem = app(\Illuminate\Filesystem\Filesystem::class);
+        $this->client = app(Client::class);
+        $this->filesystem = app(\Illuminate\Filesystem\Filesystem::class);
     }
 
     /**

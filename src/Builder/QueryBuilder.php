@@ -73,7 +73,7 @@ class QueryBuilder
      *
      * @return string
      */
-    public function getSelect(): string
+    public function getSelect()
     {
         return implode(', ', $this->select);
     }
@@ -104,7 +104,7 @@ class QueryBuilder
      *
      * @return string
      */
-    public function getFrom(): string
+    public function getFrom()
     {
         return $this->from;
     }
@@ -135,7 +135,7 @@ class QueryBuilder
      *
      * @return string
      */
-    public function getWhere(): string
+    public function getWhere()
     {
         $output = [];
 
@@ -209,7 +209,7 @@ class QueryBuilder
     /**
      * @return string
      */
-    public function getLimit(): string
+    public function getLimit()
     {
         return $this->limit;
     }
