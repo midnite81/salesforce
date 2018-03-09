@@ -3,7 +3,7 @@
 namespace Midnite81\Salesforce;
 
 use Illuminate\Support\ServiceProvider;
-use Midnite81\Commands\GetToken;
+use Midnite81\Salesforce\Commands\GetToken;
 
 class SalesforceServiceProvider extends ServiceProvider
 {
