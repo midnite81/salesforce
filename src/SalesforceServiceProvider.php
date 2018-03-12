@@ -7,6 +7,8 @@ use Midnite81\Salesforce\Commands\GetToken;
 
 class SalesforceServiceProvider extends ServiceProvider
 {
+    protected $defer = false;
+
     /**
      * Bootstrap any application services.
      *
