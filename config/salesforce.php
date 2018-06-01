@@ -55,7 +55,7 @@ return [
 
             'username' =>  env('LIVE_SF_USERNAME'),
 
-            'password' => env('LIVE_SF_USERNAME'),
+            'password' => env('LIVE_SF_PASSWORD'),
         ],
     ],
 ];
