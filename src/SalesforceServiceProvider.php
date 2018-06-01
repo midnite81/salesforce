@@ -17,7 +17,7 @@ class SalesforceServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../config/salesforce.php' => config_path('salesforce.php')
+            __DIR__ . '/../config/midnite-salesforce.php' => config_path('midnite-salesforce.php')
         ]);
         $this->commands([
             GetToken::class,
@@ -30,6 +30,6 @@ class SalesforceServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/salesforce.php', 'salesforce');
+        $this->mergeConfigFrom(__DIR__ . '/../config/midnite-salesforce.php', 'midnite-salesforce');
     }
 }

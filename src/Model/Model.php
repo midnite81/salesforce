@@ -469,11 +469,11 @@ abstract class Model
 
     protected function setConfig()
     {
-        $config = config('salesforce');
-        $environment = config('salesforce.environment');
+        $config = config('midnite-salesforce');
+        $environment = config('midnite-salesforce.environment');
 
         if (!empty($config['environments'][$environment])) {
-            return config('salesforce.environments.' . $environment);
+            return config('midnite-salesforce.environments.' . $environment);
         }
 
         return null;

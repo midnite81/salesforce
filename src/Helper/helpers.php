@@ -7,8 +7,8 @@ if ( ! function_exists('sf_config')) {
      */
     function sf_config($key)
     {
-        $config = config('salesforce');
-        $env = config('salesforce.environment');
+        $config = config('midnite-salesforce');
+        $env = config('midnite-salesforce.environment');
 
         if (empty ($env)) {
             return null;
