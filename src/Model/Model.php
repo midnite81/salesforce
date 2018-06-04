@@ -482,7 +482,7 @@ abstract class Model
         $config = config('midnite-salesforce');
         $environment = config('midnite-salesforce.environment');
 
-        if (!empty($config['environments'][$environment])) {probab
+        if (!empty($config['environments'][$environment])) {
             return config('midnite-salesforce.environments.' . $environment);
         }
 
