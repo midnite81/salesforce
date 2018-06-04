@@ -462,17 +462,27 @@ abstract class Model
     }
 
 
+    /**
+     * Get config
+     *
+     * @return \Illuminate\Config\Repository|mixed|null
+     */
     public function getConfig()
     {
         return $this->config;
     }
 
+    /**
+     * Attach environment specific config to the class Config
+     *
+     * @return \Illuminate\Config\Repository|mixed|null
+     */
     protected function setConfig()
     {
         $config = config('midnite-salesforce');
         $environment = config('midnite-salesforce.environment');
 
-        if (!empty($config['environments'][$environment])) {
+        if (!empty($config['environments'][$environment])) {probab
             return config('midnite-salesforce.environments.' . $environment);
         }
 
