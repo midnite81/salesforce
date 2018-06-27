@@ -3,6 +3,7 @@
 namespace Midnite81\Salesforce\Commands;
 
 use GuzzleHttp\Client;
+use Midnite81\Salesforce\Events\CouldNotRetrieveToken;
 use Midnite81\Salesforce\Exceptions\CouldNotRetrieveTokenException;
 use Midnite81\Salesforce\Services\Json;
 use Illuminate\Console\Command;
@@ -66,6 +67,7 @@ class GetToken extends Command
      * Execute the console command.
      *
      * @return mixed
+     * @throws CouldNotRetrieveTokenException
      */
     public function handle()
     {
@@ -79,6 +81,7 @@ class GetToken extends Command
         try {
             $request = $this->requestData($this->get('/services/oauth2/token'), $params);
         } catch (\Exception $e) {
+            event(new CouldNotRetrieveToken($e));
             throw new CouldNotRetrieveTokenException($e->getMessage());
         }
 
