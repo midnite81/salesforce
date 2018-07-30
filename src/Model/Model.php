@@ -141,7 +141,7 @@ abstract class Model
             if (! empty($data->records[0]) && $returnModel) {
                 return static::find($data->records[0]->Id);
             }
-            return static::newInstance();
+            return collect();
         }
 
         return collect(json_decode($response->getBody()->getContents()));
@@ -151,7 +151,6 @@ abstract class Model
      * @param string $query
      * @param bool $first
      * @return \Illuminate\Support\Collection
-     * @throws \Illuminate\Container\EntryNotFoundException
      * @throws Exception
      */
     public function executeQueryRaw($query, $first = false)
@@ -171,7 +170,7 @@ abstract class Model
             if (! empty($data->records[0])) {
                 return collect($data->records[0]);
             }
-            return null;
+            return collect();
         }
 
         return collect(json_decode($response->getBody()->getContents()));
