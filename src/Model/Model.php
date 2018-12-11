@@ -402,6 +402,31 @@ abstract class Model
     }
 
     /**
+     * Get Picklist
+     *
+     * @param $label
+     * @return array
+     * @throws \Illuminate\Container\EntryNotFoundException
+     */
+    public function getPicklist($label)
+    {
+        $describe = $this->describe();
+        $describe = json_decode($describe);
+        $values = [];
+
+        if ($describe->fields) {
+            foreach ($describe->fields as $field) {
+                if ($field->label == $label) {
+                    foreach ($field->picklistValues as $picklistValue) {
+                        $values[] = $picklistValue->label;
+                    }
+                }
+            }
+        }
+        return $values;
+    }
+
+    /**
      * Error Handling
      *
      * @param Exception $e
