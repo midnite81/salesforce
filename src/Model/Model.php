@@ -141,6 +141,9 @@ abstract class Model
             if (! empty($data->records[0]) && $returnModel) {
                 return static::find($data->records[0]->Id);
             }
+            if ($returnModel) {
+                return new static();
+            }
             return collect();
         }
 
